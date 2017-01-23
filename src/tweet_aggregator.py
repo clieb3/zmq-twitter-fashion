@@ -9,6 +9,8 @@ import zmq
 TWEET_INGEST_URL = "tcp://127.0.0.1:5558"
 CONTROL_URL = "tcp://127.0.0.1:5559"
 
+LOGFILE = 'log.tweet_aggregator.txt'
+
 def print_metrics(tweets_by_user, f):
     def count_tweets_by_users(f):
         for user, tweets in tweets_by_user.iteritems():
@@ -19,7 +21,7 @@ def print_metrics(tweets_by_user, f):
 def process_tweet(tweets_by_user, handle, text):
     tweets_by_user[handle].append(text)
 
-    with open('tweet_aggregator.log', 'w') as f:
+    with open(LOGFILE, 'w') as f:
         print_metrics(tweets_by_user, f)
 
 def tweet_aggregator():
@@ -57,7 +59,7 @@ def tweet_aggregator():
                 control_message = control_receiver.recv()
 
                 if control_message == "FINISHED":
-                    with open('log.tweet_aggregator.txt', 'w') as f:
+                    with open(LOGFILE, 'w') as f:
                         print("Received %s, printing metrics" % (control_message), file=f)
 
                         print_metrics(tweets_by_user, f)
